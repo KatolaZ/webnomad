@@ -30,7 +30,7 @@ source $SYS/zuper/zuper
 vars+=(SYS DIR CMD dst)
 
 vars+=(TITLE DESCRIPTION KEYWORDS TYPE IMAGE EXTENSION)
-vars+=(WEB_ROOT FILES_ROOT THUMB_SIZE BOOTSTRAP destination)
+vars+=(WEB_ROOT FILES_ROOT THUMB_SIZE BOOTSTRAP BOOTSTRAP_VERSION destination)
 vars+=(FLOWTYPE FONT_RATIO EXIF_CLEAN EXIF_COMMENT EXIF_ROTATE)
 vars+=(total_fonts cssfound)
 arrs+=(includecss includejs fonts)
@@ -113,8 +113,9 @@ render_header() {
     <meta name="MSSmartTagsPreventParsing" content="True" />
 EOF
 
-    [[ $BOOTSTRAP = 0 ]] || {
-        cat <<EOF
+    [[ $BOOTSTRAP = 0 ]] ||
+        {
+            cat <<EOF
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements
      http://html5shim.googlecode.com/svn/trunk/html5.js -->
 <!--[if lt IE 9]>
@@ -124,11 +125,21 @@ EOF
 <!-- Bootstrap -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="${baseurl}/css/bootstrap.min.css" rel="stylesheet" />
+
+EOF
+            if [[ $BOOTSTRAP_VERSION == "2" ]]; then 
+                
+                cat <<EOF
     <link href="${baseurl}/css/bootstrap-responsive.css" rel="stylesheet" />
 
 EOF
-    }
-
+            elif [[ $BOOTSTRAP_VERSION == "3" ]]; then 
+### KatolaZ: dunno whether we should include also
+### bootstrap-theme.min.css here...
+                ;;
+            fi
+        }
+    
     cat <<EOF
 <!-- Open Graph for social networks -->
     <meta property="og:title" content="$TITLE" />
@@ -415,17 +426,29 @@ mkdir -p "$destination/js"
 mkdir -p "$destination/img"
 
 [[ "$BOOTSTRAP" = "" ]] || {
-    #{ test -r "$destination"/css/bootstrap.css } || {
-    cp "$SYS"/css/bootstrap.css            "$destination"/css/
+
     cp "$SYS"/img/*                        "$destination"/img/
-    cp "$SYS"/css/bootstrap.min.css        "$destination"/css/
-    cp "$SYS"/css/bootstrap-responsive.css "$destination"/css/
-    #}
-    cp "$SYS"/js/bootstrap.min.js          "$destination"/js/
     cp "$SYS"/js/html5.js                 "$destination"/js/
-}
-
-
+    if [[ $BOOTSTRAP_VERSION == "2" ]]; then
+        {
+            #{ test -r "$destination"/css/bootstrap.css } || {
+            cp "$SYS"/css/bootstrap_2/bootstrap.css            "$destination"/css/
+            cp "$SYS"/css/bootstrap_2/bootstrap.min.css        "$destination"/css/
+            cp "$SYS"/css/bootstrap_2/bootstrap-responsive.css "$destination"/css/
+            #}
+            cp "$SYS"/js/bootstrap_2/bootstrap.min.js          "$destination"/js/
+        }
+    if [[ $BOOTSTRAP_VERSION == "3" ]]; then
+        {
+            #{ test -r "$destination"/css/bootstrap.css } || {
+            cp "$SYS"/css/bootstrap_3/bootstrap.css            "$destination"/css/
+            cp "$SYS"/css/bootstrap_3/bootstrap.min.css        "$destination"/css/
+            #}
+            cp "$SYS"/js/bootstrap_3/bootstrap.min.js          "$destination"/js/
+            ### KatolaZ: dunno whether we should include also bootstrap-theme.min.css here...
+        }
+        
+        
 
 
 

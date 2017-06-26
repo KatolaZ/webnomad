@@ -145,6 +145,9 @@ TWITTER="@DyneOrg"
 # Comment to disable Bootstrap
 BOOTSTRAP=1
 
+## Set bootstrap version to use, either "2" or "3"
+BOOTSTRAP_VERSION=3
+
 # What file extension to use for html files
 EXTENSION=".html"
 
